@@ -259,7 +259,27 @@ pwsh ./Invoke-CcmCsvCertIssue.ps1 -KeyGen local `
 | `--api-base-url URL` | `-ApiBaseUrl URL` | Regional endpoint (default `https://api.venafi.cloud`). |
 
 The API key and a shared key password can also come from the `CCM_API_KEY` and
-`CCM_KEY_PASSWORD` environment variables.
+`CCM_KEY_PASSWORD` environment variables instead of `--api-key`/`-ApiKey` and
+`--key-password`/`-KeyPassword` (so the key never appears on the command line):
+
+```powershell
+# PowerShell — set for the current session, then run without -ApiKey/-KeyPassword
+$env:CCM_API_KEY      = "<YOUR_API_KEY>"
+$env:CCM_KEY_PASSWORD = "ChangeMe123!"   # optional; omit to get a random password per cert
+pwsh ./Invoke-CcmCsvCertIssue.ps1 -CsvPath ./devices.csv `
+  -ApplicationName "Example Devices" -IssuingTemplate "MSCA-1year" -OutputDir ./out -InstallDeps
+```
+
+```bash
+# Bash
+export CCM_API_KEY="<YOUR_API_KEY>"
+export CCM_KEY_PASSWORD="ChangeMe123!"   # optional; omit to get a random password per cert
+python ccm_csv_cert_issue.py --csv ./devices.csv \
+  --application-name "Example Devices" --issuing-template "MSCA-1year" --output-dir ./out
+```
+
+A command-line value (`--api-key` / `--key-password`) takes precedence over the
+environment variable if both are set.
 
 ---
 
